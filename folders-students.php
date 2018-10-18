@@ -44,7 +44,7 @@ if ($handle = fopen($fileName, 'r')) {
 *******************************************
 TRAITEMENT DES DATAS
 *******************************************
-TODO : passer les datas des étudiants en minuscule et remplacer les éventuels espaces par des underscores
+TODO : passer les datas des étudiants en minuscule, supprimer les accents et remplacer les espaces par des underscores
 */
 
 // strtolower() renvoie une chaîne en minuscules
@@ -52,7 +52,7 @@ TODO : passer les datas des étudiants en minuscule et remplacer les éventuels 
 
 foreach ($students as $firstname => $lastname) {
     //$studentsLowercase[strtolower($firstname)] = strtolower($lastname);
-    $studentsFormated[str_replace(' ', '_', strtolower($firstname))] = str_replace(' ', '_', strtolower($lastname));
+    $studentsFormated[str_replace('é', 'e', str_replace(' ', '_', strtolower($firstname)))] = str_replace('é', 'e', str_replace(' ', '_', strtolower($lastname)));
 }
 
 //d($studentsFormated);
