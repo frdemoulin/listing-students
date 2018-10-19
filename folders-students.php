@@ -24,21 +24,27 @@ $fileName = 'listing-students.csv';
 // la fonction fopen() ouvre le fichier $fileName en lecture seule (argument 'r') et place le curseur au début de la première ligne
 // retourne une ressource représentant le pointeur de fichier ou FALSE si erreur
 
+// on déclare le tableau des étudiants
+$students = [];
+
 if ($handle = fopen($fileName, 'r')) {
 
 // la fonction fgetcsv() retourne les champs du csv dans un array indexé $line
 // index 0 => nom ; index 1 => prénom
 
     while ($line = fgetcsv($handle)) {
-        // on stocke les infos de l'étudiant dans l'array associatif $students
-        // clé : prénom => valeurs : nom;
-       
-        $students[$line[1]] = $line[0];
+        // on stocke les datas des étudiants dans un tableau de tableaux indexés
+        // index 0 : premier étudiant
+            // index 0 => nom ; index 1 => prénom
+        
+        array_push($students, $line);
     }
 
 } else {
     echo 'Erreur à l\'ouverture du fichier ' . $fileName;
 }
+
+//d($students);
 
 /*
 *******************************************
@@ -50,12 +56,16 @@ TODO : passer les datas des étudiants en minuscule, supprimer les accents et re
 // strtolower() renvoie une chaîne en minuscules
 // str_replace() remplace un caractère par un autre
 
-foreach ($students as $firstname => $lastname) {
-    //$studentsLowercase[strtolower($firstname)] = strtolower($lastname);
-    $studentsFormated[str_replace('é', 'e', str_replace(' ', '_', strtolower($firstname)))] = str_replace('é', 'e', str_replace(' ', '_', strtolower($lastname)));
-}
+// on stocke les datas formatées des étudiants dans $studentsFormated qui est un tableau indexé de tableaux indexés
+// index 0 : premier étudiant
+    // index 0 : prenom ; index 1 : nom
 
-//d($studentsFormated);
+foreach ($students as $key => $value) {
+    // on stocke le prénom en index 0
+    $studentsFormated[$key][0] = str_replace('é', 'e', str_replace(' ', '_', strtolower($value[1])));
+    // on stocke le nom en index 1
+    $studentsFormated[$key][1] = str_replace('é', 'e', str_replace(' ', '_', strtolower($value[0])));
+}
 
 /*
 *******************************************
@@ -72,15 +82,21 @@ $folderParent = 'students';
 // mkdir() crée un dossier
 if(!is_dir($folderParent)){
     mkdir($folderParent);
+    echo 'création du dossier parent OK <br />';
 }
 
-// on crée dans le dossier de stockage les dossiers des étudiants au format prenom-nom
-foreach ($studentsFormated as $firstname => $lastname) {
+// on déclare un compteur de dossier créé
+$cpt = 1;
 
-$folderName = $firstname . '-' . $lastname; 
+// on crée dans le dossier de stockage les dossiers des étudiants au format prenom-nom
+// $value[0] contient le prénom, $value[1] le nom
+foreach ($studentsFormated as $value) {
+
+$folderName = $value[0] . '-' . $value[1]; 
 
     if(!is_dir($folderParent . '/' . $folderName)){
         mkdir($folderParent . '/' . $folderName);
-     }
-    
+        echo '#' . $cpt . ' - dossier ' . $folderName . ' créé avec succès <br />';
+    $cpt++; 
+    }
 }
